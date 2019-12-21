@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.1-beta" last-position="0,168" last-zoom="1"
+	 default-schema="public" default-owner="postgres">
+<database name="movielens">
+</database>
+
+<schema name="public" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<table name="User">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="200" y="180"/>
+	<column name="user_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="gender">
+		<type name="char" length="1"/>
+	</column>
+	<column name="zip_code">
+		<type name="varchar" length="10"/>
+	</column>
+	<constraint name="User_pk" type="pk-constr" table="public.&quot;User&quot;">
+		<columns names="user_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Age">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<comment><![CDATA[Represents the age groups of users. Age with ID age_id represents the interval [lower_bound, upper_bound)]]></comment>
+	<position x="760" y="120"/>
+	<column name="age_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="lower_bound">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="upper_bound">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="Age_pk" type="pk-constr" table="public.&quot;Age&quot;">
+		<columns names="age_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="Age_has_many_User" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#d33e25"
+	 src-table="public.&quot;Age&quot;"
+	 dst-table="public.&quot;User&quot;"
+	 src-required="false" dst-required="false"/>
+
+<table name="Movie">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="240" y="500"/>
+	<column name="movie_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="movie_title">
+		<type name="text" length="0"/>
+	</column>
+	<column name="release_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="imdb_url">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="Movie_pk" type="pk-constr" table="public.&quot;Movie&quot;">
+		<columns names="movie_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="Occupation">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="760" y="280"/>
+	<column name="occupation_id" not-null="true">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="ocupation">
+		<type name="varchar" length="50"/>
+	</column>
+	<constraint name="Occupation_pk" type="pk-constr" table="public.&quot;Occupation&quot;">
+		<columns names="occupation_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="Occupation_has_many_User" type="rel1n"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#89b83e"
+	 src-table="public.&quot;Occupation&quot;"
+	 dst-table="public.&quot;User&quot;"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="many_User_has_many_Movie" type="relnn"
+	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
+	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
+	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 pk-col-pattern="id"
+	 custom-color="#018d67"
+	 src-table="public.&quot;User&quot;"
+	 dst-table="public.&quot;Movie&quot;"
+	 src-required="false" dst-required="false"
+	 table-name="Rating">
+	<label ref-type="name-label">
+		<position x="89.6128" y="9.56434"/>
+	</label>
+	<column name="rating">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="timestamp">
+		<type name="timestamp" length="0"/>
+	</column>
+</relationship>
+
+<table name="Genre">
+	<schema name="public"/>
+	<role name="postgres"/>
+	<position x="780" y="520"/>
+	<column name="genre_id" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="genre">
+		<type name="varchar" length="30"/>
+	</column>
+	<constraint name="Genre_pk" type="pk-constr" table="public.&quot;Genre&quot;">
+		<columns names="genre_id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="many_Movie_has_many_Genre" type="relnn"
+	 src-col-pattern="{sc}_{st}" dst-col-pattern="{sc}_{dt}"
+	 pk-pattern="{gt}_pk" uq-pattern="{gt}_uq"
+	 src-fk-pattern="{st}_fk" dst-fk-pattern="{dt}_fk"
+	 pk-col-pattern="id"
+	 custom-color="#e8f86f"
+	 src-table="public.&quot;Movie&quot;"
+	 dst-table="public.&quot;Genre&quot;"
+	 src-required="false" dst-required="false"
+	 table-name="MovieCategory"/>
+
+</dbmodel>

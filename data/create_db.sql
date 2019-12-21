@@ -44,7 +44,7 @@ CREATE TABLE "Movie" (
 DROP TABLE IF EXISTS "Occupation" CASCADE;
 CREATE TABLE "Occupation" (
 	occupation_id integer NOT NULL,
-	ocupation varchar(50),
+	occupation varchar(50),
 	CONSTRAINT "Occupation_pk" PRIMARY KEY (occupation_id)
 );
 
@@ -70,4 +70,30 @@ ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE "Rating" DROP CONSTRAINT IF EXISTS "Movie_fk" CASCADE;
 ALTER TABLE "Rating" ADD CONSTRAINT "Movie_fk" FOREIGN KEY ("movie_id")
 REFERENCES "Movie" (movie_id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+
+DROP TABLE IF EXISTS "Genre" CASCADE;
+CREATE TABLE "Genre"(
+	genre_id smallint NOT NULL,
+	genre varchar(30),
+	CONSTRAINT "Genre_pk" PRIMARY KEY (genre_id)
+
+);
+
+DROP TABLE IF EXISTS "MovieCategory" CASCADE;
+CREATE TABLE "MovieCategory" (
+	"movie_id" integer NOT NULL,
+	"genre_id" smallint NOT NULL,
+	CONSTRAINT "MovieCategory_pk" PRIMARY KEY ("movie_id","genre_id")
+
+);
+
+ALTER TABLE "MovieCategory" DROP CONSTRAINT IF EXISTS "Movie_fk" CASCADE;
+ALTER TABLE "MovieCategory" ADD CONSTRAINT "Movie_fk" FOREIGN KEY ("movie_id")
+REFERENCES "Movie" (movie_id) MATCH FULL
+ON DELETE RESTRICT ON UPDATE CASCADE;
+
+ALTER TABLE "MovieCategory" DROP CONSTRAINT IF EXISTS "Genre_fk" CASCADE;
+ALTER TABLE "MovieCategory" ADD CONSTRAINT "Genre_fk" FOREIGN KEY ("genre_id")
+REFERENCES "Genre" (genre_id) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
