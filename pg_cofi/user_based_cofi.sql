@@ -13,15 +13,15 @@ FROM
 	"Rating" AS r1 JOIN
 	"Rating" AS r2 ON r1.movie_id = r2.movie_id
 WHERE
-	-- store each common movie once per (u1, u2) pair, i.e. (u1, u2, movie) = (u2, u1, movie)
+	-- store each common user once per (u1, u2) pair, i.e. (u1, u2, movie) = (u2, u1, movie)
 	r1.user_id < r2.user_id
 GROUP BY 
 	u1, u2;
 
-
 DROP FUNCTION IF EXISTS cofi_user(INTEGER, INTEGER);
 
-/* User-based collaborative filtering: "User will rate a new movie similarly to people who rated same movies with similar ratings as them".
+/* User-based collaborative filtering: "User will rate a new movie similarly to people who rated this movie and 
+	rated other movies similarly as the user".
 	Note: does not handle case where there are no similar users for the query (raises divide by zero in that case).
 
 	Example use: get predicted rating of user with ID 1 for movie with ID 1 
