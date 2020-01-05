@@ -41,7 +41,7 @@ BEGIN
 		FROM 
 			(SELECT * FROM "CommonMovieAggregate" WHERE u1 = u_id) AS agg1
 			JOIN (SELECT * FROM "Rating" WHERE movie_id = m_id) AS r1
-			ON agg1.u1 = r1.user_id
+			ON agg1.u2 = r1.user_id
 	),
 	sims2 AS (
 		SELECT 
@@ -50,7 +50,7 @@ BEGIN
 		FROM 
 			(SELECT * FROM "CommonMovieAggregate" WHERE u2 = u_id) AS agg2
 			JOIN (SELECT * FROM "Rating" WHERE movie_id = m_id) AS r2
-			ON agg2.u2 = r2.user_id
+			ON agg2.u1 = r2.user_id
 	)
 	-- weighted sum of ratings / sum of similarities
 	SELECT ((SELECT weighted_ratings FROM sims1) + (SELECT weighted_ratings FROM sims2)) / 
