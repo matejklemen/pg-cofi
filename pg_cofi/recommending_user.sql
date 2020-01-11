@@ -47,16 +47,31 @@ BEGIN
 		END LOOP;
 		
 		-- finding movies that u_id didn't rate
-		FOR movie in (SELECT m.movie_id
-			FROM "Movie" m
-			WHERE m.movie_id not in (SELECT r.movie_id FROM "Rating" r WHERE r.user_id=u_id))
-			
+		--FOR movie in (SELECT m.movie_id
+			--FROM "Movie" m
+			--WHERE m.movie_id not in (SELECT r.movie_id FROM "Rating" r WHERE r.user_id=u_id))
+		
+				
+						
+		
+		
+		FOR movie in (SELECT m.movie_id as mov
+					  FROM "Movie" m
+					  WHERE m.movie_id not in (SELECT r.movie_id 
+										 FROM "Rating" r 
+										 WHERE r.user_id=u_id) 
+					  and
+					  m.movie_id in (SELECT ra.movie_id 
+									  FROM "Rating" ra, "CommonMovieAggregate" c
+									  WHERE c.u1=u_id and ra.user_id=c.u2
+									  )
+					)
 		LOOP
 			r := cofi_user(u_id, movie);
 			-- puting movie with highest predicted rating in the first place in the array rec
 			FOR j IN REVERSE 5..1 BY 1 LOOP
 				-- if the rating is smaller than the smallest in the rec -> don't put it in the array rec
-				IF r <= rec[j] THEN 
+				IF r <= (SELECT(rec)[j]) THEN 
 					EXIT;
 				-- otherwise: 
 				ELSE
@@ -71,9 +86,9 @@ BEGIN
 					l := j - 1;
 					WHILE j>=1 AND (SELECT(rec)[l])<tmp LOOP
 						--rec[l+1] := rec[l];
-						rec = array_set_elementr(rec, (SELECT rec)[l],l+1);
+						rec = array_set_elementr(rec, ((SELECT rec)[l]),l+1);
 						--movies[l+1] := movies[l];
-						movies = array_set_elementi(movies, (SELECT movies)[l],l+1);
+						movies = array_set_elementi(movies, ((SELECT movies)[l]),l+1);
 						
 						l := l - 1;
 					END LOOP;					
