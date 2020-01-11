@@ -103,8 +103,10 @@ def insert_movies(cursor, genre_encoder):
 	cursor.execute('INSERT INTO "MovieCategory" (movie_id, genre_id) VALUES {}'.format(",".join(records_categories)))
 
 
-def insert_ratings(cursor):
-	df = pd.read_csv(os.path.join("ml-1m", "ratings.dat"), sep="::", engine="python", header=None, names=["UserID", "MovieID", "Rating", "Timestamp"])
+def insert_ratings(cursor, data_version):
+	assert data_version in {"ml-1m", os.path.join("ml-1m", "train"), os.path.join("ml-1m", "val"), os.path.join("ml-1m", "test")}
+
+	df = pd.read_csv(os.path.join(data_version, "ratings.dat"), sep="::", engine="python", header=None, names=["UserID", "MovieID", "Rating", "Timestamp"])
 	records = []
 	for idx_row in range(df.shape[0]):
 		ex = df.iloc[idx_row]
@@ -138,7 +140,12 @@ if __name__ == "__main__":
 	insert_movies(cur, genres)
 	conn.commit()
 
-	insert_ratings(cur)
+	# To insert all the data, use the following call:
+	# insert_ratings(cur, "ml-1m")
+
+	# To insert only a part of the data (for evaluation), use the following call:
+	insert_ratings(cur, "ml-1m/train")
+	
 	conn.commit()
 
 	cur.close()
