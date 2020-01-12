@@ -23,7 +23,6 @@ LANGUAGE plpgsql;
 
 
 DROP FUNCTION IF EXISTS recommending_user(INTEGER);
-
 CREATE FUNCTION recommending_user(u_id INTEGER) RETURNS INTEGER[] AS
 $$
 DECLARE	
@@ -56,7 +55,7 @@ BEGIN
 					  and
 					  m.movie_id in (SELECT ra.movie_id 
 									  FROM "Rating" ra, "CommonMovieAggregate" c
-									  WHERE c.u1=u_id and ra.user_id=c.u2
+									  WHERE (c.u1=u_id and ra.user_id=c.u2) or (c.u2=u_id and ra.user_id=c.u1)
 									  )
 					  )
 		LOOP
