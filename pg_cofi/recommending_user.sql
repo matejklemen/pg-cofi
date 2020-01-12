@@ -57,7 +57,7 @@ BEGIN
 									  FROM "Rating" ra, "CommonMovieAggregate" c
 									  --WHERE (c.u1=u_id and ra.user_id=c.u2) or (c.u2=u_id and ra.user_id=c.u1)
 									  WHERE ((c.u1=u_id and ra.user_id=c.u2) or (c.u2=u_id and ra.user_id=c.u1)) 
-												and c.cosine_sim > 0.975
+												and c.cosine_sim <= 0.9999 and c.cosine_sim > 0.975
 									  )
 					  )
 		LOOP
