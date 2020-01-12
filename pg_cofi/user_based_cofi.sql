@@ -18,6 +18,8 @@ WHERE
 GROUP BY 
 	u1, u2;
 
+ALTER TABLE "CommonMovieAggregate" ADD PRIMARY KEY (u1, u2);
+
 DROP FUNCTION IF EXISTS cofi_user(INTEGER, INTEGER);
 
 /* User-based collaborative filtering: "User will rate a new movie similarly to people who rated this movie and 
