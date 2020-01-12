@@ -25,6 +25,7 @@ if __name__ == "__main__":
 
 	for (curr_user, curr_movie, gt_rating) in test_set:
 		try:
+			# NOTE: exchange 'cofi_user' with 'cofi_movie' based on whether you want to evaluate user- or movie-based collaborative filtering
 			cur.execute(f"SELECT cofi_user({curr_user}, {curr_movie})");
 			curr_pred = cur.fetchone()[0]
 
@@ -33,11 +34,13 @@ if __name__ == "__main__":
 		except Exception as e:
 			print("Skipped an example due to:")
 			print(e)
+			conn.rollback()
 
 	rmse = (sum_of_square_errs / num_examples) ** 0.5
 	end_time = time()
 	print(f"RMSE: {rmse:.3f}")
 	print(f"Elapsed time: {end_time - start_time:.3f}s (for {num_examples}/{len(test_set)} examples)")
-
+	
+	conn.commit()
 	cur.close()
 	conn.close()

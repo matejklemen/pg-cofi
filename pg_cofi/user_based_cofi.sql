@@ -29,13 +29,13 @@ DROP FUNCTION IF EXISTS cofi_user(INTEGER, INTEGER);
 	Example use: get predicted rating of user with ID 1 for movie with ID 1 
 	> SELECT cofi_user(1, 1); 
 */
+
 CREATE FUNCTION cofi_user(u_id INTEGER, m_id INTEGER) RETURNS REAL AS
 $$
--- store result into a temporary variable as functions don't seem to play nice with the `with` statement
 DECLARE	result REAL;
 BEGIN
 	WITH 
-	-- source user ID can be in either `u1` or `u2` column of aggregate table, storing similarities
+	-- source user ID can be in either `u1` or `u2` column of aggregate table
 	sims1 AS (
 		SELECT 
 			COALESCE(SUM(agg1.cosine_sim), 0) AS sum_of_sims,
@@ -62,3 +62,4 @@ BEGIN
 END;
 $$
 LANGUAGE PLPGSQL;
+
