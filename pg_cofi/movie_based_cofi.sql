@@ -18,7 +18,7 @@ WHERE
 GROUP BY 
 	m1, m2;
 
-ALTER TABLE "CommonUserAggregate" ADD PRIMARY KEY (u1, u2);
+ALTER TABLE "CommonUserAggregate" ADD PRIMARY KEY (m1, m2);
 
 DROP FUNCTION IF EXISTS cofi_movie(INTEGER, INTEGER);
 
