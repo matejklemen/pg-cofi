@@ -27,9 +27,9 @@ CREATE FUNCTION recommending_user(u_id INTEGER) RETURNS INTEGER[] AS
 $$
 DECLARE	
 	-- vrednosti predlogov
-	rec REAL ARRAY[5]; 
+	rec REAL ARRAY[10]; 
 	-- movie_id with the highest predicted rating (or should we give movi title?)
-	movies INTEGER ARRAY [5];
+	movies INTEGER ARRAY [10];
 	--movie that u_id didn't rate
 	movie INTEGER; 
 	-- rating for movie -> cofi_user(u_id,r)
@@ -41,7 +41,7 @@ DECLARE
 	l INTEGER;
 	m INTEGER;
 BEGIN	
-		FOR i IN 1..5 LOOP
+		FOR i IN 1..10 LOOP
 			rec = array_append(rec, 0:: REAL);
 			movies = array_append(movies, 0:: INTEGER);
 		END LOOP;
@@ -55,42 +55,35 @@ BEGIN
 					  and
 					  m.movie_id in (SELECT ra.movie_id 
 									  FROM "Rating" ra, "CommonMovieAggregate" c
-									  --WHERE (c.u1=u_id and ra.user_id=c.u2) or (c.u2=u_id and ra.user_id=c.u1)
 									  WHERE ((c.u1=u_id and ra.user_id=c.u2) or (c.u2=u_id and ra.user_id=c.u1)) 
-												and c.cosine_sim <= 0.9999 and c.cosine_sim > 0.975
+												 and c.cosine_sim > 0.975
 									  )
 					  )
 		LOOP
 			r := cofi_user(u_id, movie);
 			
 			-- if the rating is smaller than the smallest in the rec -> don't put it in the array rec
-			IF r <= (SELECT(rec)[5]) THEN 
+			IF r <= (SELECT(rec)[10]) THEN 
 					CONTINUE;
 			-- otherwise: 
 			ELSE
-				rec = array_set_elementr(rec, r, 5);
-				--rec[j]:=r;
-				--movies[j] := movie;
-				movies = array_set_elementi(movies,movie,5);
+				rec = array_set_elementr(rec, r, 10);
+				movies = array_set_elementi(movies,movie,10);
 			END IF;
 			
 			-- puting movie with highest predicted rating in the first place in the array rec
-			FOR j IN REVERSE 5..1 BY 1 LOOP			
+			FOR j IN REVERSE 10..1 BY 1 LOOP			
 					tmp := (SELECT(rec)[j]);
 					tmp_movie := (SELECT(movies)[j]);
 					
 					l := j - 1;
 					WHILE j>=1 AND (SELECT(rec)[l])<tmp LOOP
-						--rec[l+1] := rec[l];
 						rec = array_set_elementr(rec, ((SELECT rec)[l]),l+1);
-						--movies[l+1] := movies[l];
 						movies = array_set_elementi(movies, ((SELECT movies)[l]),l+1);
 						
 						l := l - 1;
-					END LOOP;					
-					--rec[l+1] := tmp;
+					END LOOP;				
 					rec = array_set_elementr(rec, tmp, l+1);
-					--movies[l+1] := tmp_movie;
 					movies = array_set_elementi(movies,tmp_movie,l+1);
 								
 			END LOOP;
