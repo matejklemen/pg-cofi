@@ -15,7 +15,7 @@ CREATE TABLE "NormalizedRating" AS
 SELECT 
 	r.user_id AS user_id,
 	r.movie_id AS movie_id,
-	(r.rating - avgr.avg_rating) AS rating,
+	(r.rating - avgr.avg_rating + 1e-5) AS rating,
 	r.timestamp
 FROM 
 	"Rating" AS r JOIN 
@@ -32,7 +32,7 @@ SELECT
 	r1.movie_id AS m1,
 	r2.movie_id AS m2,
 	COUNT(*) AS N,
-	SUM(r1.rating * r2.rating) / (SQRT(SUM(r1.rating * r1.rating)) * SQRT(SUM(r2.rating * r2.rating)) + 1e-10) AS cosine_sim
+	SUM(r1.rating * r2.rating) / (SQRT(SUM(r1.rating * r1.rating)) * SQRT(SUM(r2.rating * r2.rating))) AS cosine_sim
 FROM
 	"NormalizedRating" AS r1 JOIN
 	"NormalizedRating" AS r2 ON r1.user_id = r2.user_id
@@ -78,9 +78,9 @@ BEGIN
 	)
 	-- weighted sum of ratings / sum of similarities
 	SELECT ((SELECT weighted_ratings FROM sims1) + (SELECT weighted_ratings FROM sims2)) / 
-			((SELECT sum_of_sims FROM sims1) + (SELECT sum_of_sims FROM sims2)) INTO result;
+			((SELECT sum_of_sims FROM sims1) + (SELECT sum_of_sims FROM sims2)) + (SELECT avg_rating FROM "AvgUserRating" WHERE user_id = u_id LIMIT 1) INTO result;
 
-	RETURN result + (SELECT avg_rating FROM "AvgUserRating" WHERE user_id = u_id);
+	RETURN result;
 END;
 $$
 LANGUAGE PLPGSQL;
